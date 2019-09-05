@@ -73,7 +73,29 @@ Bloc бүр event хүлээж авахаасаа өмнө initial state-ээ (�
 @override
 int get initialState => 0;
 
-Bloc бүр mapEventToState функцыг агуулах бөгөөд энэ нь орж ирж буй event-ийг аргумент байдлаар хүлээн авч шинээр үүсгэсэн state-ийн stream-ийг буцаана. Энэхүү stream нь presentation layer-тэй холбогддог.
+Bloc бүр mapEventToState функцыг агуулах бөгөөд энэ нь орж ирж буй event-ийг аргумент байдлаар хүлээн авч шинээр үүсгэсэн state-ийн stream-ийг буцаана. Энэхүү stream нь presentation layer-тэй холбогддог. Доорх жишээнд одоо байгаа state-ийн (currentState) утгыг өөрчилж шинэ state үүсгээд, түүнийгээ буцааж байна.
+import 'package:bloc/bloc.dart';
+
+enum CounterEvent { increment, decrement }
+
+class CounterBloc extends Bloc<CounterEvent, int> {
+  @override
+  int get initialState => 0;
+
+  @override
+  Stream<int> mapEventToState(CounterEvent event) async* {
+    switch (event) {
+      case CounterEvent.decrement:
+        yield currentState - 1;
+        break;
+      case CounterEvent.increment:
+        yield currentState + 1;
+        break;
+    }
+  }
+}
+Хэрэв currentState нь newState-тэй тэнцүү бол transition хийгдэхгүй.
+
 
 
 
