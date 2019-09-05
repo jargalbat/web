@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Bloc</h1>
+Bloc буюу business logic загвар
+Яагаад Bloc гэж?
+-Энгийн, ойлгомжтой.
+-Эмх цэгцтэй.
+-Тест хийхэд хялбар.
+-Хурдан, риактив.
+-Component, модулиудыг хэсэгчлэн болон бүхлээр нь дахин ашиглах, өөр аpp-д шилжүүлэх боломжтой.
+-Хэрэглэгчийн app-тай хэрхэн харьцаж байгаа мэдээллүүдийг цуглуулан авч илүү боловсонгуй app хөгжүүлэх.
+Bloc нь дээрх асуудлуудыг цогцоор нь шийдэхэд зориулагдсан загвар юм.
+
+Суурь ойлголтууд
+Суурь ойлголтуудыг тайлбарлахын тулд нэмэх, хасах 2 товчны аль нэгийг дарахад дэлгэц дээрх тоо өөрчлөгддөг app-ыг Bloc загвараар зохиоё.
+
+-Event 
+Event буюу үйл явдал, үзэгдэл нь Bloc-ийн хувьд оролт юм. Жишээ нь хэрэглэгч үйлдэл хийх, товч дарах гэх мэт.
+enum CounterEvent { increment, decrement }
+increment, decrement event-үүд нь хэрэглэгч нэмэх, хасах товч дарах үйлдэл юм. Энэхүү жишээн дээр event-ийг enum-аар зарласан бөгөөд хэрэв Bloc руу утга дамжуулах шаардлага гарвал class ашиглана.
+
+-State
+State буюу төлөв нь Bloc-ийн хувьд гаралт юм. Жишээ нь хэрэглэгч нэмэх товч дарахад дэлгэц дээрх тооны утга нэгээр нэмэгдэх. State өөрчлөгдөхөд хэрэглэгчид харагдах дизайн дахин зурагддаг. Энэхүү жишээний хувьд state нь товч дарахад өөрчлөгдөж буй int утга юм.
+
+-Transitions
+Нэг state-ээс өөр нэг state рүү шилжиж буй өөрчлөлтийг transition буюу шилжилт гэнэ. Increment, decrement event-үүд тоолуурын state-ийг шинэчилнэ. State-ийн өөрчлөлт бүр transition-ы дараалалд нэмэгдэнэ.
+{
+  "currentState": 0,
+  "event": "CounterEvent.increment",
+  "nextState": 1
+},
+{
+  "currentState": 1,
+  "event": "CounterEvent.decrement",
+  "nextState": 0
+}
+
+-Streams
+Stream нь асинхрон өгөгдлийн дараалал (жагсаалт) юм. Bloc нь RxDart (риактив функциональ програмчлалын сан) дээр үндэслэж зохиогдсон бөгөөд RxDart нь ReactiveX дээр суурилсан байдаг. Bloc pattern-ыг сайн ойлгохын тулд stream-ийг заавал судалсан байх шаардлагатай. Stream-ийг дотроо ус гүйлгэх зориулалттай төмөр хоолойтой зүйрлэж болно. Төмөр хоолой нь stream, ус нь ассинхрон өгөгдөл юм.
+Stream<int> countStream(int max) async* {
+    for (int i = 0; i < max; i++) {
+        yield i;
+    }
+}
+yield (гарц, өгөөж) нь өгөгдлийн stream-ийг буцаах түлхүүр үг. Дээрх жишээн дээр тэгээс max хүртэлх утгуудыг stream-ээр дамжуулан нэг нэгээр нь буцааж байна. 
+Future<int> sumStream(Stream<int> stream) async {
+    int sum = 0;
+    await for (int value in stream) {
+        sum += value;
+    }
+    return sum;
+}
+await түлхүүр үгээр дамжуулан ирээдүйд (Future) орж ирэх int утгуудыг хүлээнэ.
+yield, async* нь нийт өгөгдлийг stream-ээр дамжуулан хэсэгчлэн буцаадаг бол await, async нь stream-ээр дамжин ирэх хэсэгчилсэн өгөгдлүүдийг хүлээн авна.
+
+void main() async {
+    /// Initialize a stream of integers 0-9
+    Stream<int> stream = countStream(10);
+    /// Compute the sum of the stream of integers
+    int sum = await sumStream(stream);
+    /// Print the sum
+    print(sum); // 45
+}
+
+</body>
+</html>
