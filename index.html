@@ -2,6 +2,12 @@
 <html>
 <body>
 <h1>Hello</h1>
-
+<code class="lang-dart">
+Stream<int> countStream(int max) async* {
+    for (int i = 0; i < max; i++) {
+        yield i;
+    }
+}    
+</code>
 </body>
 </html>
